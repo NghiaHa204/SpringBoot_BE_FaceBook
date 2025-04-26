@@ -44,5 +44,3 @@ out/
 
 # File môi trường hoặc nhạy cảm
 .env
-application.properties
-application.yml
