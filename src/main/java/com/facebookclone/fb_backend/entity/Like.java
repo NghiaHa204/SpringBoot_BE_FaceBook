@@ -1,6 +1,7 @@
 package com.facebookclone.fb_backend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
@@ -10,6 +11,7 @@ public class Like {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -25,7 +27,19 @@ public class Like {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    // Getters và setters
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // Ensure mutual exclusivity of post and comment
+    public void validate() {
+        if ((post != null && comment != null) || (post == null && comment == null)) {
+            throw new IllegalStateException("A like must be associated with either a post or a comment, but not both.");
+        }
+    }
+
+    // Getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public User getUser() { return user; }

@@ -1,24 +1,53 @@
 package com.facebookclone.fb_backend.controller;
 
 import com.facebookclone.fb_backend.entity.Friendship;
+import com.facebookclone.fb_backend.entity.User;
 import com.facebookclone.fb_backend.service.FriendshipService;
+import com.facebookclone.fb_backend.service.UserService;
+import com.facebookclone.fb_backend.entity.Friendship;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/friendships")
 public class FriendshipController {
     private final FriendshipService friendshipService;
+    private final UserService userService;
 
-    public FriendshipController(FriendshipService friendshipService) {
+    public FriendshipController(FriendshipService friendshipService, UserService userService) {
         this.friendshipService = friendshipService;
+        this.userService = userService;
     }
 
-    @PostMapping
-    public ResponseEntity<Friendship> createFriendship(@RequestBody Friendship friendship) {
+    @PostMapping("/addFriend")
+    public ResponseEntity<?> createFriendship(@RequestParam("requesterId") Long requesterId,
+                                                        @RequestParam("receiverId") Long receiverId,
+                                                        @RequestParam("status") String status) {
+        User requester = userService.findById(requesterId);
+        User receiver = userService.findById(receiverId);
+        Friendship friendship = new Friendship();
+        friendship.setRequester(requester);
+        friendship.setReceiver(receiver);
+        friendship.setCreatedAt(LocalDateTime.now());
+        
+        try {
+            friendship.setStatus(Friendship.Status.valueOf(status));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid status value: " + status + ". Allowed values are: pending, accepted, declined.");
+        }
         return ResponseEntity.ok(friendshipService.createFriendship(friendship));
+    }
+
+    @DeleteMapping("/deleteFriend/{id}")
+    public ResponseEntity<?> deleteFriendship(@PathVariable Long id) {
+        friendshipService.deleteFriendship(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/received/{receiverId}")
@@ -29,5 +58,25 @@ public class FriendshipController {
     @GetMapping("/friends/{userId}")
     public ResponseEntity<List<Friendship>> getFriends(@PathVariable Long userId) {
         return ResponseEntity.ok(friendshipService.getFriends(userId));
+    }
+
+    // Hàm này lấy người dùng được gửi lời mời kết bạn và đã chấp nhận
+    @GetMapping("/userFriends/{userId}")
+    public ResponseEntity<List<Friendship>> getFriendsAcceptedReceive(@PathVariable Long userId) {
+        if (userId == null || userId <= 0) {
+            return ResponseEntity.badRequest().build(); // Trả về 400 Bad Request nếu userId không hợp lệ
+        }
+        List<Friendship> friendsAsRequester = friendshipService.getAcceptedFriends(userId);
+        List<Friendship> friendsAsReceiver = friendshipService.getFriends(userId);
+        List<Friendship> allUserFriends = new ArrayList<>();
+
+        if(friendsAsRequester != null) {
+            allUserFriends.addAll(friendsAsRequester);
+        }
+        if(friendsAsReceiver != null) {
+            allUserFriends.addAll(friendsAsReceiver);
+        }
+
+        return ResponseEntity.ok(allUserFriends);
     }
 }
