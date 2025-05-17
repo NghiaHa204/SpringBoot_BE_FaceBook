@@ -1,5 +1,6 @@
 package com.facebookclone.fb_backend.service;
 
+import com.facebookclone.fb_backend.dto.User.UserRequestDTO;
 import com.facebookclone.fb_backend.entity.User;
 import com.facebookclone.fb_backend.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,6 +16,8 @@ import java.util.Base64; // Cần import Base64 ở đây để mã hóa sang St
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
+
+import java.time.LocalDateTime;
 
 @Service
 public class UserService {
@@ -167,5 +170,9 @@ public class UserService {
             return user;
         }
         return null;
+    }
+
+    public String getUserNameByEmail(String email){
+        return userRepository.findByEmail(email).getName();
     }
 }

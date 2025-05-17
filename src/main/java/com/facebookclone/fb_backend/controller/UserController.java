@@ -1,5 +1,6 @@
 package com.facebookclone.fb_backend.controller;
 
+import com.facebookclone.fb_backend.dto.User.UserRequestDTO;
 import com.facebookclone.fb_backend.entity.User;
 import com.facebookclone.fb_backend.service.UserService;
 
@@ -25,6 +26,7 @@ public class UserController {
         this.userService = userService;
     }
 
+
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> register(@RequestParam("name") String name,
                                       @RequestParam("email") String email,
@@ -41,7 +43,6 @@ public class UserController {
                     .body("Có lỗi xảy ra khi đăng ký người dùng: " + e.getMessage());
         }
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         User user = userService.findById(id);

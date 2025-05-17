@@ -42,6 +42,7 @@ public class User {
     private String avatarContentType;
 
     @Column(nullable = true)
+
     private String bio;
 
     @Column(nullable = false)
@@ -53,9 +54,11 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+
     // --- Mối quan hệ ---
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore // Ngăn Jackon serialize mối quan hệ này khi fetch User đơn lẻ
+
     private List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
