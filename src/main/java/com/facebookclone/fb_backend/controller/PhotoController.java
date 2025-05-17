@@ -1,7 +1,11 @@
 package com.facebookclone.fb_backend.controller;
 
+import com.facebookclone.fb_backend.dto.Photo.PhotoRequestDTO;
+import com.facebookclone.fb_backend.dto.Photo.PhotoResponseDTO;
+import com.facebookclone.fb_backend.dto.Photo.SimplePhotoDTO;
 import com.facebookclone.fb_backend.entity.Photo;
 import com.facebookclone.fb_backend.service.PhotoService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,20 +21,32 @@ public class PhotoController {
     }
 
     @PostMapping
-    public ResponseEntity<Photo> createPhoto(@RequestBody Long albumId, String name, String imageUrl) {
-        return ResponseEntity.ok(photoService.createPhoto(albumId, name, imageUrl));
+    public ResponseEntity<?> createPhoto(@RequestBody PhotoRequestDTO request) {
+        try{
+            Photo newPhoto = photoService.createPhoto(request.getAlbumId(), request.getName(), request.getImageUrl());
+            PhotoResponseDTO responseDTO = new PhotoResponseDTO(
+                    newPhoto.getId(),
+                    newPhoto.getName(),
+                    newPhoto.getImageUrl(),
+                    newPhoto.getAlbum().getId(),
+                    newPhoto.getCreatedAt()
+            );
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body("Tạo photo that bai" + e.getMessage());
+        }
     }
 
     @GetMapping("/album/{albumId}")
-    public ResponseEntity<List<Photo>> getPhotosByAlbumId(@PathVariable Long albumId) {
-        return ResponseEntity.ok(photoService.getPhotosByAlbumId(albumId));
+    public ResponseEntity<List<SimplePhotoDTO>> getPhotosByAlbumId(@PathVariable Long albumId) {
+        List<SimplePhotoDTO> simplePhotoDTOs = photoService.getPhotosByAlbumId(albumId);
+        return ResponseEntity.ok(simplePhotoDTOs);
     }
 
     @GetMapping("/{photoId}")
-    public ResponseEntity<Photo> getPhoto(@PathVariable Long photoId){
-        Photo photo = photoService.getPhotoById(photoId);
-        if(photo == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(photo);
+    public ResponseEntity<PhotoResponseDTO> getPhoto(@PathVariable Long photoId){
+        return ResponseEntity.ok(photoService.getPhotoById(photoId));
     }
 
     @DeleteMapping("/{photoId}")
@@ -38,4 +54,6 @@ public class PhotoController {
         photoService.deleteById(photoId);
         return ResponseEntity.noContent().build();
     }
+
+
 }
