@@ -17,12 +17,25 @@ public class PhotoController {
     }
 
     @PostMapping
-    public ResponseEntity<Photo> createPhoto(@RequestBody Photo photo) {
-        return ResponseEntity.ok(photoService.createPhoto(photo));
+    public ResponseEntity<Photo> createPhoto(@RequestBody Long albumId, String name, String imageUrl) {
+        return ResponseEntity.ok(photoService.createPhoto(albumId, name, imageUrl));
     }
 
     @GetMapping("/album/{albumId}")
     public ResponseEntity<List<Photo>> getPhotosByAlbumId(@PathVariable Long albumId) {
         return ResponseEntity.ok(photoService.getPhotosByAlbumId(albumId));
+    }
+
+    @GetMapping("/{photoId}")
+    public ResponseEntity<Photo> getPhoto(@PathVariable Long photoId){
+        Photo photo = photoService.getPhotoById(photoId);
+        if(photo == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(photo);
+    }
+
+    @DeleteMapping("/{photoId}")
+    public ResponseEntity<Void> deletePhoto(@PathVariable Long photoId){
+        photoService.deleteById(photoId);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,5 +1,6 @@
 package com.facebookclone.fb_backend.controller;
 
+import com.facebookclone.fb_backend.dto.User.UserRequestDTO;
 import com.facebookclone.fb_backend.entity.User;
 import com.facebookclone.fb_backend.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +16,8 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
-        return ResponseEntity.ok(userService.createUser(user));
+    public ResponseEntity<User> register(@RequestBody UserRequestDTO userDTO) {
+        return ResponseEntity.ok(userService.createUser(userDTO));
     }
 
     @GetMapping("/{id}")
