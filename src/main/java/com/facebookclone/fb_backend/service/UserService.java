@@ -16,8 +16,8 @@ import java.util.Base64; // Cần import Base64 ở đây để mã hóa sang St
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
-
 import java.time.LocalDateTime;
+
 
 @Service
 public class UserService {
@@ -107,6 +107,19 @@ public class UserService {
         return user;
     }
 
+
+    public User login(String email, String password) {
+        User user = userRepository.findByEmail(email);
+        if (user != null && user.getPassword().equals(password)) {
+            return user;
+        }
+        return null;
+    }
+
+    public String getUserNameByEmail(String email){
+        return userRepository.findByEmail(email).getName();
+    }
+
     // --- Phương thức LẤY TẤT CẢ người dùng ---
     public List<User> findAll() {
         List<User> users = userRepository.findAll();
@@ -130,7 +143,7 @@ public class UserService {
         if (name != null) existingUser.setName(name);
         if (email != null) existingUser.setEmail(email);
         if (password != null && !password.isEmpty()) { // Thêm kiểm tra rỗng
-            existingUser.setPassword(password); // Cần hash mật khẩu này!
+             existingUser.setPassword(password); // Cần hash mật khẩu này!
         }
 
         if (status != null) existingUser.setStatus(status);
@@ -145,15 +158,15 @@ public class UserService {
             existingUser.setAvatarImage(base64Image);
             // Lấy content type của file
             existingUser.setAvatarContentType(avatarFile.getContentType());
-            // Đảm bảo avatarUrl là null
-            existingUser.setAvatarUrl(null);
+             // Đảm bảo avatarUrl là null
+             existingUser.setAvatarUrl(null);
 
-            logger.info("UserService.updateUser: New avatar file processed and encoded to Base64. Base64 length: " + base64Image.length() + ", ContentType: " + existingUser.getAvatarContentType());
+             logger.info("UserService.updateUser: New avatar file processed and encoded to Base64. Base64 length: " + base64Image.length() + ", ContentType: " + existingUser.getAvatarContentType());
         } else {
-            // Nếu không có file mới được gửi, giữ nguyên ảnh cũ.
-            // Nếu bạn muốn chức năng xóa ảnh avatar từ frontend, cần thêm logic (ví dụ: nhận flag xóa từ Controller)
-            // và xử lý ở đây: if (deleteAvatarFlag) { existingUser.setAvatarImage(null); existingUser.setAvatarContentType(null); existingUser.setAvatarUrl(null); }
-            logger.info("UserService.updateUser: No new avatar file uploaded. Keeping existing avatar.");
+             // Nếu không có file mới được gửi, giữ nguyên ảnh cũ.
+             // Nếu bạn muốn chức năng xóa ảnh avatar từ frontend, cần thêm logic (ví dụ: nhận flag xóa từ Controller)
+             // và xử lý ở đây: if (deleteAvatarFlag) { existingUser.setAvatarImage(null); existingUser.setAvatarContentType(null); existingUser.setAvatarUrl(null); }
+             logger.info("UserService.updateUser: No new avatar file uploaded. Keeping existing avatar.");
         }
 
         // Logic lưu thay đổi vào DB
@@ -163,16 +176,5 @@ public class UserService {
     }
     public Long countUser() {
         return userRepository.count();
-    }
-    public User login(String email, String password) {
-        User user = userRepository.findByEmail(email);
-        if (user != null && user.getPassword().equals(password)) {
-            return user;
-        }
-        return null;
-    }
-
-    public String getUserNameByEmail(String email){
-        return userRepository.findByEmail(email).getName();
     }
 }

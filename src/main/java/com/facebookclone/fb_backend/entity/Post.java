@@ -1,8 +1,13 @@
 package com.facebookclone.fb_backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -12,43 +17,65 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
+    // @Size(max = 1000)
     @Column(columnDefinition = "TEXT")
     private String content;
-
-    @Column(name = "image_url", columnDefinition = "TEXT")
-    private String imageUrl;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
+    @Lob // Để sql biết đây là thuộc tính có kiểu dữ liệu lớn
+    @Column(name = "image_url")
+    private String imageUrl;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    // Thêm imageContentType vowishamf get set của nó
+    @Column(name = "image_content_type")
+    private String imageContentType;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"posts", "comments", "likes"})
+    private User user;
+
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "video_url")
+    private String videoUrl;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Like> likes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Notification> notifications = new ArrayList<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Comment> comments = new ArrayList<>();
 
-    // Getters và setters
+    // Getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-    public List<Comment> getComments() { return comments; }
-    public void setComments(List<Comment> comments) { this.comments = comments; }
-    public List<Like> getLikes() { return likes; }
-    public void setLikes(List<Like> likes) { this.likes = likes; }
-    public List<Notification> getNotifications() { return notifications; }
-    public void setNotifications(List<Notification> notifications) { this.notifications = notifications; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public String getImageContentType() { return imageContentType; }
+    public void setImageContentType(String imageContentType) { this.imageContentType = imageContentType; }
+    public User getUser() { return user; }
+    public void setUser(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+        this.user = user;
+    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+    public String getVideoUrl() { return videoUrl; }
+    public void setVideoUrl(String videoUrl) { this.videoUrl = videoUrl; }
+    public List<Like> getLikes() { return Collections.unmodifiableList(likes); }
+    public void setLikes(List<Like> likes) { this.likes = likes != null ? likes : new ArrayList<>(); }
+    public List<Comment> getComments() { return Collections.unmodifiableList(comments); }
+    public void setComments(List<Comment> comments) { this.comments = comments != null ? comments : new ArrayList<>(); }
 }

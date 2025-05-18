@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/users")
@@ -25,7 +24,6 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-
 
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> register(@RequestParam("name") String name,
@@ -77,7 +75,8 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("deleteUser/{id}")
+
+    @DeleteMapping("deleteUser/{id}") 
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
@@ -104,5 +103,4 @@ public class UserController {
                     .body("Email hoặc mật khẩu không đúng");
         }
     }
-
 }

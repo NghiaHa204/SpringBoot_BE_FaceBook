@@ -29,20 +29,20 @@ public class User {
     @Column(name = "cover_url")
     private String coverUrl;
 
+    
+    @Lob
+    @Column(name = "image_cover")
+    private String imageCover;
+
     // Thêm avatar_image, avatarContentType, hàm get set của avatar_image với avatarContentType
     @Lob // JPA annotation để báo hiệu đây là dữ liệu lớn (LOB = Large Object)
     @Column(name = "avatar_image") // Mapping sang kiểu LONGBLOB trong MySQL
     private String avatarImage; // Trường để lưu trữ dữ liệu nhị phân của ảnh
 
-    @Lob
-    @Column(name = "image_cover")
-    private String imageCover;
-
     @Column(name = "avatar_content_type") // Trường để lưu trữ loại nội dung ảnh (e.g., image/jpeg)
     private String avatarContentType;
 
     @Column(nullable = true)
-
     private String bio;
 
     @Column(nullable = false)
@@ -54,11 +54,9 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-
     // --- Mối quan hệ ---
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore // Ngăn Jackon serialize mối quan hệ này khi fetch User đơn lẻ
-
     private List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

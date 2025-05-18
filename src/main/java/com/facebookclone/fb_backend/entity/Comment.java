@@ -1,9 +1,14 @@
 package com.facebookclone.fb_backend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "comments")
@@ -12,14 +17,18 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
+    @NotNull
+    @Size(min = 1, max = 1000)
     @Column(columnDefinition = "TEXT")
     private String content;
 
@@ -27,9 +36,15 @@ public class Comment {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Like> likes = new ArrayList<>();
 
-    // Getters và setters
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // Getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Post getPost() { return post; }
@@ -40,6 +55,6 @@ public class Comment {
     public void setContent(String content) { this.content = content; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-    public List<Like> getLikes() { return likes; }
+    public List<Like> getLikes() { return Collections.unmodifiableList(likes); }
     public void setLikes(List<Like> likes) { this.likes = likes; }
 }
