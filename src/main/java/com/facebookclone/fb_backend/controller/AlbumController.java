@@ -32,7 +32,7 @@ public class AlbumController {
         }
     }
 
-    @GetMapping("/owner/{ownerId}")
+    @GetMapping("/{ownerId}/owner")
     public ResponseEntity<List<SimpleAlbumDTO>> getAlbumsByOwnerId(@PathVariable Long ownerId) {
         List<SimpleAlbumDTO> simpleAlbums = albumService.getAlbumsByOwnerId(ownerId);
         return ResponseEntity.ok(simpleAlbums);

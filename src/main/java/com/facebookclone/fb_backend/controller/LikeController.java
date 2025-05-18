@@ -1,39 +1,58 @@
 package com.facebookclone.fb_backend.controller;
 
+import com.facebookclone.fb_backend.dto.Like.LikeRequest;
+import com.facebookclone.fb_backend.dto.Like.LikeResponse;
 import com.facebookclone.fb_backend.entity.Like;
+import com.facebookclone.fb_backend.repository.LikeRepository;
 import com.facebookclone.fb_backend.service.LikeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/likes")
 public class LikeController {
     private final LikeService likeService;
+    private final LikeRepository likeRepository;
 
-    public LikeController(LikeService likeService) {
+    public LikeController(LikeService likeService, LikeRepository likeRepository){
         this.likeService = likeService;
+        this.likeRepository = likeRepository;
     }
 
-    @PostMapping("/createLike")
-    public ResponseEntity<Like> createLike(@RequestBody Like like) {
-        return ResponseEntity.ok(likeService.createLike(like));
+    @PostMapping
+    public ResponseEntity<LikeResponse> addLike(@RequestBody LikeRequest request) {
+        return ResponseEntity.ok(likeService.addLike(request));
     }
 
-    @DeleteMapping("/deleteLike/{id}")
-    public ResponseEntity<Void> deleteLike(@PathVariable Long id) {
-        likeService.deleteLike(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping
+    public ResponseEntity<LikeResponse> removeLike(@RequestBody LikeRequest request) {
+        return ResponseEntity.ok(likeService.removeLike(request));
     }
 
-    @GetMapping("/post/{postId}")
-    public ResponseEntity<List<Like>> getLikesByPostId(@PathVariable Long postId) {
-        return ResponseEntity.ok(likeService.getLikesByPostId(postId));
+    @GetMapping("/post/{postId}/count")
+    public ResponseEntity<LikeResponse> getLikesCount(@PathVariable Long postId) {
+        return ResponseEntity.ok(likeService.getLikesCount(postId));
     }
 
-    @GetMapping("/comment/{commentId}")
-    public ResponseEntity<List<Like>> getLikesByCommentId(@PathVariable Long commentId) {
-        return ResponseEntity.ok(likeService.getLikesByCommentId(commentId));
+    @GetMapping("/post/{postId}/status")
+    public ResponseEntity<LikeResponse> getLikeStatus(@PathVariable Long postId, @RequestParam Long userId) {
+        return ResponseEntity.ok(likeService.getLikeStatus(postId, userId));
     }
+
+//    @GetMapping("/posts")
+//    public ResponseEntity<Map<Long, Map<String, Object>>> getLikesForPosts(@RequestParam List<Long> postIds, @RequestParam Long userId) {
+//        Map<Long, Map<String, Object>> result = new HashMap<>();
+//        for (Long postId : postIds) {
+//            long count = likeRepository.findByPostId(postId).stream()
+//                    .filter(like -> like.getComment() == null)
+//                    .count();
+//            boolean isLiked = likeRepository.existsByUserIdAndPostId(userId, postId);
+//            result.put(postId, Map.of("likesCount", count, "isLiked", isLiked));
+//        }
+//        return ResponseEntity.ok(result);
+//    }
 }
