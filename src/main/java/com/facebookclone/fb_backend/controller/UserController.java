@@ -53,7 +53,7 @@ public class UserController {
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
     }
 
-    @PutMapping(value = "/editUser/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/edit-user/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> editUser(@PathVariable Long id, @RequestParam("name") String name,
                                       @RequestParam("email") String email,
                                       @RequestParam(value = "bio", required = false) String bio,
@@ -76,18 +76,18 @@ public class UserController {
     }
 
 
-    @DeleteMapping("deleteUser/{id}") 
+    @DeleteMapping("delete-user{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/getAllUsers")
+    @GetMapping("/get-all-users")
     public List<User> getAllUser() {
         return userService.findAll();
     }
 
-    @GetMapping("/countUser")
+    @GetMapping("/count-user")
     public Long countUser() {
         return userService.countUser();
     }

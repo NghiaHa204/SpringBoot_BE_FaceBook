@@ -33,7 +33,7 @@ public class PostController {
         this.userService = userService;
     }
 
-     @PostMapping(value = "/createPost", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+     @PostMapping(value = "/create-post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createPost(@RequestParam("content") String content,
                                         @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                         // videoUrl is now primarily for external URLs if no videoFile is uploaded
@@ -107,7 +107,7 @@ public class PostController {
         }
     }
 
-    @PutMapping("/updatePost/{id}")
+    @PutMapping("/update-post/{id}")
     public ResponseEntity<?> updatePost(@PathVariable Long id, @RequestParam("content") String content,
                                                                 @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                                                                 @RequestParam(value = "videoUrl", required = false) String videoUrl,
@@ -154,13 +154,13 @@ public class PostController {
         }
     }
 
-    @DeleteMapping("/deletePost/{id}")
+    @DeleteMapping("/delete-post/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable Long id) {
         postService.deletePost(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/getAllPosts")
+    @GetMapping("/get-all-posts")
     public List<Post> getAllPosts() {
         return postService.getAllPosts();
     }
@@ -170,7 +170,7 @@ public class PostController {
         return ResponseEntity.ok(postService.getPostsByUserId(userId));
     }
 
-    @GetMapping("/countPost")
+    @GetMapping("/count-post")
     public Long countPost() {
         return postService.countPost();
     }

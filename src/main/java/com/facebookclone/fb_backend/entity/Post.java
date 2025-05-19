@@ -25,7 +25,7 @@ public class Post {
     private LocalDateTime createdAt;
 
     @Lob // Để sql biết đây là thuộc tính có kiểu dữ liệu lớn
-    @Column(name = "image_url")
+    @Column(name = "image_url", length = 500)
     private String imageUrl;
 
     // Thêm imageContentType vowishamf get set của nó
