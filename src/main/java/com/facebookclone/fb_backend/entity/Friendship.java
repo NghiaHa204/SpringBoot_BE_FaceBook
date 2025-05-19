@@ -27,10 +27,19 @@ public class Friendship {
     public enum Status {
         pending, accepted, declined
     }
+    @Transient // Không ánh xạ vào CSDL
+    private int mutualFriends;
 
     // Getters và setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+    public int getMutualFriends() {
+        return mutualFriends;
+    }
+
+    public void setMutualFriends(int mutualFriends) {
+        this.mutualFriends = mutualFriends;
+    }
     public User getRequester() { return requester; }
     public void setRequester(User requester) { this.requester = requester; }
     public User getReceiver() { return receiver; }
