@@ -97,7 +97,7 @@ public class UserController {
                                        @RequestParam String password) {
         User user = userService.login(email, password);
         if (user != null) {
-            return ResponseEntity.ok(user); // ✅ Trả về thông tin người dùng
+            return ResponseEntity.ok(user);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Email hoặc mật khẩu không đúng");

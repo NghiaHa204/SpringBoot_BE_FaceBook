@@ -174,6 +174,7 @@ public class UserService {
         logger.info("UserService.updateUser: User " + updatedUser.getId() + " updated.");
         return updatedUser;
     }
+
     public Long countUser() {
         return userRepository.count();
     }
