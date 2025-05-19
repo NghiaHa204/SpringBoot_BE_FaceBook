@@ -43,6 +43,7 @@ public class PostService {
         return post;
     }
 
+
     public Post updatePost(Long id, String content, MultipartFile imageFile, String videoUrl, String status) throws IOException{
         Post existingPost = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người dùng với ID: " + id));
 
