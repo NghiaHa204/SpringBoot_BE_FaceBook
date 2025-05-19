@@ -36,7 +36,7 @@ public class User {
 
     // Thêm avatar_image, avatarContentType, hàm get set của avatar_image với avatarContentType
     @Lob // JPA annotation để báo hiệu đây là dữ liệu lớn (LOB = Large Object)
-    @Column(name = "avatar_image") // Mapping sang kiểu LONGBLOB trong MySQL
+    @Column(name = "avatar_image", length = 500) // Mapping sang kiểu LONGBLOB trong MySQL
     private String avatarImage; // Trường để lưu trữ dữ liệu nhị phân của ảnh
 
     @Column(name = "avatar_content_type") // Trường để lưu trữ loại nội dung ảnh (e.g., image/jpeg)
